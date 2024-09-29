@@ -73,7 +73,8 @@ function addHabit(name) {
         name: name,
         seconds: 0,
         hours: 0,
-        days: 0
+        days: 0,
+        lastUpdated: Date.now() // Initialize lastUpdated
     };
     habits.push(newHabit);
     saveHabits();
@@ -87,27 +88,71 @@ function deleteHabit(id) {
     renderHabits();
 }
 
-// Function to update counters
-function updateCounters() {
+// Function to calculate elapsed time and update counters
+function calculateElapsedTime() {
+    const now = Date.now();
+
     habits.forEach((habit, index) => {
-        // Increment seconds
-        habit.seconds += 1;
+        const elapsedMilliseconds = now - habit.lastUpdated;
+        const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+
+        habit.seconds += elapsedSeconds;
 
         // Convert seconds to hours
         if (habit.seconds >= 3600) {
-            habit.seconds = 0;
-            habit.hours += 1;
+            habit.hours += Math.floor(habit.seconds / 3600);
+            habit.seconds = habit.seconds % 3600;
         }
 
         // Convert hours to days
         if (habit.hours >= 24) {
-            habit.hours = 0;
-            habit.days += 1;
+            habit.days += Math.floor(habit.hours / 24);
+            habit.hours = habit.hours % 24;
         }
 
-        // Update in array
+        // Update lastUpdated timestamp
+        habit.lastUpdated = now;
+
+        // Update the habit in the array
         habits[index] = habit;
     });
+
+    saveHabits();
+    renderHabits();
+}
+
+// Function to update counters while the app is open
+function updateCounters() {
+    const now = Date.now();
+
+    habits.forEach((habit, index) => {
+        // Calculate the time difference since the last update
+        const elapsedMilliseconds = now - habit.lastUpdated;
+        const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+
+        if (elapsedSeconds >= 1) {
+            habit.seconds += elapsedSeconds;
+
+            // Convert seconds to hours
+            if (habit.seconds >= 3600) {
+                habit.hours += Math.floor(habit.seconds / 3600);
+                habit.seconds = habit.seconds % 3600;
+            }
+
+            // Convert hours to days
+            if (habit.hours >= 24) {
+                habit.days += Math.floor(habit.hours / 24);
+                habit.hours = habit.hours % 24;
+            }
+
+            // Update lastUpdated timestamp
+            habit.lastUpdated = now;
+
+            // Update the habit in the array
+            habits[index] = habit;
+        }
+    });
+
     saveHabits();
     renderHabits();
 }
@@ -122,7 +167,8 @@ habitForm.addEventListener('submit', (e) => {
     }
 });
 
-// Initial render
+// Initial calculations and render
+calculateElapsedTime();
 renderHabits();
 
 // Update counters every second
