@@ -13,43 +13,58 @@ function saveHabits() {
 
 // Function to create habit HTML
 function createHabitElement(habit) {
+    // Create main habit card
     const habitDiv = document.createElement('div');
     habitDiv.classList.add('habit');
     habitDiv.setAttribute('data-id', habit.id);
 
-    const habitInfo = document.createElement('div');
-    habitInfo.classList.add('habit-info');
-    habitInfo.innerHTML = `<strong>${habit.name}</strong>`;
+    // Create habit header
+    const habitHeader = document.createElement('div');
+    habitHeader.classList.add('habit-header');
 
+    const habitName = document.createElement('div');
+    habitName.classList.add('habit-name');
+    habitName.textContent = habit.name;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    deleteBtn.title = 'Delete Habit';
+
+    // Append name and delete button to header
+    habitHeader.appendChild(habitName);
+    habitHeader.appendChild(deleteBtn);
+
+    // Create counters container
     const countersDiv = document.createElement('div');
     countersDiv.classList.add('counters');
 
-    // Create counters
+    // Create individual counters
     const secondCounter = document.createElement('div');
     secondCounter.classList.add('counter');
-    secondCounter.innerHTML = `Seconds: ${habit.seconds}`;
+    secondCounter.innerHTML = `<span>${habit.seconds}</span> Seconds`;
+
+    const minuteCounter = document.createElement('div');
+    minuteCounter.classList.add('counter');
+    minuteCounter.innerHTML = `<span>${habit.minutes}</span> Minutes`;
 
     const hourCounter = document.createElement('div');
     hourCounter.classList.add('counter');
-    hourCounter.innerHTML = `Hours: ${habit.hours}`;
+    hourCounter.innerHTML = `<span>${habit.hours}</span> Hours`;
 
     const dayCounter = document.createElement('div');
     dayCounter.classList.add('counter');
-    dayCounter.innerHTML = `Days: ${habit.days}`;
+    dayCounter.innerHTML = `<span>${habit.days}</span> Days`;
 
+    // Append counters to counters container
     countersDiv.appendChild(secondCounter);
+    countersDiv.appendChild(minuteCounter);
     countersDiv.appendChild(hourCounter);
     countersDiv.appendChild(dayCounter);
 
-    // Delete button
-    const deleteBtn = document.createElement('button');
-    deleteBtn.classList.add('delete-btn');
-    deleteBtn.textContent = 'Delete';
-
-    // Append all to habitDiv
-    habitDiv.appendChild(habitInfo);
+    // Append header and counters to main habit card
+    habitDiv.appendChild(habitHeader);
     habitDiv.appendChild(countersDiv);
-    habitDiv.appendChild(deleteBtn);
 
     // Event listener for delete
     deleteBtn.addEventListener('click', () => deleteHabit(habit.id));
@@ -72,9 +87,9 @@ function addHabit(name) {
         id: Date.now(),
         name: name,
         seconds: 0,
+        minutes: 0,
         hours: 0,
-        days: 0,
-        lastUpdated: Date.now() // Initialize lastUpdated
+        days: 0
     };
     habits.push(newHabit);
     saveHabits();
@@ -88,73 +103,47 @@ function deleteHabit(id) {
     renderHabits();
 }
 
-// Function to calculate elapsed time and update counters
-function calculateElapsedTime() {
+// Function to update counters (Optimized)
+function updateCounters() {
     const now = Date.now();
+    const oneSecond = 1000;
 
     habits.forEach((habit, index) => {
-        const elapsedMilliseconds = now - habit.lastUpdated;
-        const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+        // Increment seconds
+        habit.seconds += 1;
 
-        habit.seconds += elapsedSeconds;
+        // Convert seconds to minutes
+        if (habit.seconds >= 60) {
+            habit.seconds = 0;
+            habit.minutes += 1;
+        }
 
-        // Convert seconds to hours
-        if (habit.seconds >= 3600) {
-            habit.hours += Math.floor(habit.seconds / 3600);
-            habit.seconds = habit.seconds % 3600;
+        // Convert minutes to hours
+        if (habit.minutes >= 60) {
+            habit.minutes = 0;
+            habit.hours += 1;
         }
 
         // Convert hours to days
         if (habit.hours >= 24) {
-            habit.days += Math.floor(habit.hours / 24);
-            habit.hours = habit.hours % 24;
+            habit.hours = 0;
+            habit.days += 1;
         }
-
-        // Update lastUpdated timestamp
-        habit.lastUpdated = now;
 
         // Update the habit in the array
         habits[index] = habit;
-    });
 
-    saveHabits();
-    renderHabits();
-}
-
-// Function to update counters while the app is open
-function updateCounters() {
-    const now = Date.now();
-
-    habits.forEach((habit, index) => {
-        // Calculate the time difference since the last update
-        const elapsedMilliseconds = now - habit.lastUpdated;
-        const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
-
-        if (elapsedSeconds >= 1) {
-            habit.seconds += elapsedSeconds;
-
-            // Convert seconds to hours
-            if (habit.seconds >= 3600) {
-                habit.hours += Math.floor(habit.seconds / 3600);
-                habit.seconds = habit.seconds % 3600;
-            }
-
-            // Convert hours to days
-            if (habit.hours >= 24) {
-                habit.days += Math.floor(habit.hours / 24);
-                habit.hours = habit.hours % 24;
-            }
-
-            // Update lastUpdated timestamp
-            habit.lastUpdated = now;
-
-            // Update the habit in the array
-            habits[index] = habit;
+        // Update DOM elements directly to avoid re-rendering
+        const habitDiv = document.querySelector(`.habit[data-id='${habit.id}']`);
+        if (habitDiv) {
+            const counters = habitDiv.querySelectorAll('.counter span');
+            if (counters[0]) counters[0].textContent = habit.seconds;
+            if (counters[1]) counters[1].textContent = habit.minutes;
+            if (counters[2]) counters[2].textContent = habit.hours;
+            if (counters[3]) counters[3].textContent = habit.days;
         }
     });
-
     saveHabits();
-    renderHabits();
 }
 
 // Event listener for form submission
@@ -167,8 +156,7 @@ habitForm.addEventListener('submit', (e) => {
     }
 });
 
-// Initial calculations and render
-calculateElapsedTime();
+// Initial render
 renderHabits();
 
 // Update counters every second

@@ -1,88 +1,175 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@400;700&display=swap');
+
+/* CSS Variables for Theme */
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #ffffff;
+    --accent-color: #f44336;
+    --background-color: #f0f2f5;
+    --text-color: #333333;
+    --card-background: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+}
+
+/* Reset & Base Styles */
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .container {
     width: 90%;
     max-width: 600px;
-    margin: 50px auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background: var(--card-background);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px var(--shadow);
 }
 
 h1 {
     text-align: center;
-    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 2em;
+    color: var(--primary-color);
 }
 
 form {
     display: flex;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 form input {
     flex: 1;
-    padding: 10px;
+    padding: 12px 15px;
     font-size: 16px;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    outline: none;
+    transition: border-color var(--transition-speed);
+}
+
+form input:focus {
+    border-color: #388E3C;
 }
 
 form button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background: #28a745;
-    color: #fff;
+    background: var(--primary-color);
+    color: var(--secondary-color);
     border: none;
+    padding: 0 20px;
+    font-size: 16px;
     cursor: pointer;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
 }
 
 form button:hover {
-    background: #218838;
+    background-color: #388E3C;
+    transform: translateY(-2px);
 }
 
+#habits-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Habit Card Styles */
 .habit {
+    background: var(--card-background);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.habit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px var(--shadow);
+}
+
+.habit-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #e9ecef;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 3px;
+    margin-bottom: 15px;
 }
 
-.habit-info {
-    flex: 1;
+.habit-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: var(--accent-color);
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: color var(--transition-speed), transform var(--transition-speed);
+}
+
+.delete-btn:hover {
+    color: #c62828;
+    transform: scale(1.2);
 }
 
 .counters {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
 .counter {
-    background: #fff;
-    padding: 5px 10px;
-    border-radius: 3px;
-    border: 1px solid #ccc;
+    background: #f9f9f9;
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid #e0e0e0;
+    min-width: 100px;
+    text-align: center;
+    font-size: 0.95em;
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
 }
 
-.delete-btn {
-    background: #dc3545;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 3px;
+.counter:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-2px);
 }
 
-.delete-btn:hover {
-    background: #c82333;
+.counter span {
+    display: block;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+@media (max-width: 600px) {
+    .counters {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .counter {
+        width: 100%;
+    }
 }

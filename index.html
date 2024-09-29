@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Habit Tracker</title>
+    <title>Modern Habit Tracker</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-papRq/XxIbv+4VwEjjShGx/jV7e6h6X70flrOGuUwPzIWzrA43cEV2Z4i6I6k1K1ZK1Vn8jKzJ3JmgwZjV7GWg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,7 +15,7 @@
         <h1>Habit Tracker</h1>
         <form id="habit-form">
             <input type="text" id="habit-name" placeholder="Enter habit name" required>
-            <button type="submit">Add Habit</button>
+            <button type="submit"><i class="fas fa-plus"></i> Add Habit</button>
         </form>
         <div id="habits-container">
             <!-- Habits will be dynamically added here -->
